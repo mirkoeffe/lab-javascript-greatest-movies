@@ -59,11 +59,65 @@ function orderByYear(moviesArray) {
 
 // Iteration 6: Alphabetic Order - Order by title and print the first 20 titles
 function orderAlphabetically(moviesArray) {
+    const sortedMovies = moviesArray.slice().sort((a, b) => a.title.localeCompare(b.title));
+    const top20Movies = sortedMovies.slice(0, 20).map(movie => movie.title);
 
+    return top20Movies;
 }
 
 // BONUS - Iteration 7: Time Format - Turn duration of the movies from hours to minutes
-function turnHoursToMinutes(moviesArray) { }
+function turnHoursToMinutes(moviesArray) {
+    return moviesArray.map(movie => {
+        const durationParts = movie.duration.split('h');
+        let totalMinutes = 0;
+
+        if (durationParts.length === 2) {
+            const hours = +durationParts[0];
+            const minutes = +durationParts[1].replace('min', '') || 0;
+            totalMinutes = hours * 60 + minutes;
+        } else {
+            totalMinutes = +durationParts[0].replace('min', '') || 0;
+        }
+
+        return { ...movie, duration: totalMinutes };
+    });
+}
 
 // BONUS - Iteration 8: Best yearly score average - Best yearly score average
-function bestYearAvg(moviesArray) { }
+
+function bestYearAvg(moviesArray) {
+    if (moviesArray.length === 0) {
+        return null;
+    }
+
+
+    const yearScores = {};
+
+    moviesArray.forEach(movie => {
+        const year = movie.year;
+        const score = movie.score;
+
+        if (yearScores[year]) {
+            yearScores[year].sum += score;
+            yearScores[year].count += 1;
+        } else {
+            yearScores[year] = { sum: score, count: 1 };
+        }
+    });
+
+
+    let bestYear = null;
+    let bestAvg = 0;
+
+    for (const year in yearScores) {
+        const avg = yearScores[year].sum / yearScores[year].count;
+
+        if (avg > bestAvg || (avg === bestAvg && year < bestYear)) {
+            bestAvg = avg;
+            bestYear = year;
+        }
+    }
+
+
+    return `The best year was ${bestYear} with an average score of ${bestAvg}`;
+}
